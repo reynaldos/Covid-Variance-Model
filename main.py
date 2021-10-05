@@ -1,5 +1,5 @@
 from library import *
-
+from time import time
 
 # sets up border and simulation area
 border = Turtle()

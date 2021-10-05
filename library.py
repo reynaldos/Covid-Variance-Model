@@ -1,8 +1,7 @@
 from turtle import Turtle, Screen, heading, left
 from random import randint, random
 # import numpy as np
-from time import sleep, time
-from os import system
+
 # import math
 
 # health states
