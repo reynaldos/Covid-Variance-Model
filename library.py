@@ -48,9 +48,9 @@ STARTING_COVID_STRAIN = "A"
 strainList = [STARTING_COVID_STRAIN]
 
 
-
+# person class that holds logic for people in the simulation
 class Person():
-    def __init__(self, x, y, ID):
+    def __init__(self, x, y, ID, legend= False):
         self.state = HEALTHY
         self.contactDebounce = False
         self.contactTime = -1   # time of first contact with sick person
@@ -74,7 +74,9 @@ class Person():
         self.turt.speed(0)
         self.turt.goto(x, y)
         self.turt.st()
+        # legend if self.turt.fd(0) else self.turt.rt(randint(0,360))
 
+    # prints out person's info
     def __str__(self):
         return f"""
         ID: {self.id}
@@ -177,7 +179,7 @@ class Person():
             self.die = True
 
 
-
+# class for writing text to screen
 class Writer:
     def __init__(self, x,y) -> None:
         self.t = Turtle()
@@ -189,6 +191,7 @@ class Writer:
          self.t.clear()
          self.t.write(text,False,dir, info)
 
+# writes stats to screen
 def stats(turt, values):
     # global amtExposed, infectedIndicies, amtImmune, strainList
     # strains = (*strainList, sep = ", ")

@@ -1,8 +1,7 @@
 from library import *
 
-screen = Screen()
 
-# makes border
+# sets up border and simulation area
 border = Turtle()
 border.ht()
 border.penup()
@@ -20,14 +19,14 @@ for i in range(4):
 
 border.end_fill()
 
-
+# simulation variables
 amtExposed = 1
 amtImmune = 0
 amtDead = 0
-
-loop = True
 day = 0
 
+# turtle screen set up
+screen = Screen()
 screen.tracer(10, 5)
 
 # Holds the index of infected turtles
@@ -35,6 +34,7 @@ infectedIndicies = list()
 
 stateVals = [amtExposed, len(infectedIndicies), amtImmune, strainList]
 
+# writes out text to simulation screen
 writeTitle = Writer(0, LENGTH*2/3)
 writeTitle.write("COVID-19 VARIANCE MODEL", "center", ("Arial", 40, "normal"))
 
@@ -47,9 +47,7 @@ writePeople.write(f"Number of People: {PEOPLE_AMT}", "right")
 writeStats = Writer(-LENGTH/2, -LENGTH/2 - 120)
 stats(writeStats, stateVals)
 
-P_OFFSET = 20
-
-
+# create legend below simulation area
 def legend(person, text):
     person.turt.stamp()
     person.turt.ht()
@@ -59,24 +57,24 @@ def legend(person, text):
     person.turt.write(text,False,"left", ("Arial", 20, "normal"))
 
 
-
+P_OFFSET = 20
 for i in range(len(stateList)):
-    p =Person(LENGTH/6, -LENGTH/2 - (i + 1)*P_OFFSET, "x")
+    p =Person(LENGTH/6, -LENGTH/2 - (i + 1)*P_OFFSET, "x", True)
     p.updateState(stateList[i])
     legend(p, states[stateList[i]])
 
 
-borderOffset = 10
 
+# initializes all the "people" in the simulation
 people = list()
-# people = np.array([], object)
+borderOffset = 10
 for i in range(PEOPLE_AMT):
     p = Person(randint(-LENGTH/2+borderOffset, LENGTH/2-borderOffset),
                randint(-LENGTH/2+borderOffset, LENGTH/2-borderOffset), i)
     if i == 0:
         p.updateState(EXPOSED)
         p.timeOfExposure = round(0, 2)
-        p.covidVarient = 1
+        p.setVarient()
         p.currentStrain = STARTING_COVID_STRAIN
 
     people.append(p)
@@ -87,11 +85,12 @@ for i in range(PEOPLE_AMT):
 
 # time
 START_TIME = time()
-
 worldTime = round(time()-START_TIME, 2)
 
+loop = True
 while loop:
 
+    # updates day counter visual
     if worldTime > day * SEC_PER_DAY:
         writeDay.write(f"Day: {day}", "left")
         day += 1
@@ -105,8 +104,10 @@ while loop:
         if p != None:
             p.move()
 
-    loop = False
+    
+    
     # state transition logic
+    loop = False
     for i, p in enumerate(people):
         if p != None:
             # checks and updates viral load for exposed peope
@@ -136,6 +137,7 @@ while loop:
     # checks for scpread
     for infected in infectedIndicies[::]:
         # print(people[infected])
+        
         # if sick person is in recovery skip check
         if people[infected].checkRecovery(worldTime):
             if people[infected].die:
@@ -146,7 +148,6 @@ while loop:
                 writePeople.write(f"Number of People: {PEOPLE_AMT-amtDead}", "right")
                 # print(amtDead)
                 continue
-
                 # pass
             else:
                 people[infected].updateState(RECOVERY)
@@ -174,22 +175,18 @@ while loop:
                                 # print("NEW STRAIN ALERT")
                                 i = ord(people[infected].currentStrain[0])
                                 i += 1
-
                                 newStrain = chr(i)
                                 for i in range(len(strainList)):
                                     if newStrain in strainList:
-                                        i = ord(people[infected].currentStrain[0])
-                                        i += 1  
-                                        newStrain = chr(i)
-
+                                        j = ord(people[infected].currentStrain[0])
+                                        j += 1  
+                                        newStrain = chr(j)
                                     else:
                                         strainList.append(newStrain)
                                         stats(writeStats, stateVals)
                                         break
 
 
-                                
-                                
                                 p.currentStrain = newStrain
                                 p.setVarient()
                                 # if newStrain not in strainList:
